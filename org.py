@@ -1,11 +1,26 @@
 from sys import argv
 from pathlib import Path
 import shutil
+import os
+import zipfile
 
-#fileType indentifier function here
+#fileType indentifier function 
 def get_dir(filename):
     ext=filename.suffix[1:]
     return dirs.get(ext,"Others")
+#compressor function
+def com_file(filename):
+    dir=get_dir(filename)
+    Zipname=os.path.basename(filename).split(".")
+    Zipname=Zipname + ".zip"
+    print("compressing...")
+    if not dir=="Pcompressed" and os.path.getsize(filename)>300000000:
+        newZip=zipfile.ZipFile(Zipname,'w')
+        newZip.write(filename,compress_type=zipfile.ZIP_DEFLATED)
+        newZip.close
+    return Zipname
+
+
 #extension dictionary here
 dirs={
      # Images
@@ -78,6 +93,9 @@ for filename in PATH.iterdir():
         if not destination.exists():
             destination.mkdir()
         shutil.move(str(PathToFile),str(destination))
+        
+           
+
 
 
 
