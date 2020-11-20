@@ -9,16 +9,22 @@ def get_dir(filename):
     ext=filename.suffix[1:]
     return dirs.get(ext,"Others")
 #compressor function
-def com_file(filename):
+def com_file(filename,path):
     dir=get_dir(filename)
-    Zipname=os.path.basename(filename).split(".")
-    Zipname=Zipname + ".zip"
-    print("compressing...")
+    Finalname=filename
     if not dir=="Pcompressed" and os.path.getsize(filename)>300000000:
+    
+        Zipname=os.path.basename(filename).split(".")
+        Zipname=Zipname[0]
+        Zipname=Zipname + ".zip"
+        print("compressing...")
+    
         newZip=zipfile.ZipFile(Zipname,'w')
         newZip.write(filename,compress_type=zipfile.ZIP_DEFLATED)
         newZip.close
-    return Zipname
+        Finalname=Zipname
+        shutil.move(str(os.path.abspath(Finalname)),str(path))
+    return Finalname
 
 
 #extension dictionary here
@@ -84,15 +90,23 @@ print("organizing...")
 print("="*35)
 #path to Organize
 PATH=Path(argv[1])
-for filename in PATH.iterdir():
+for filename in PATH.iterdir():    
     #get absolute path of the file to be organized
-    PathToFile=filename.absolute()
+    # PathToFile=filename.absolute()
     if filename.is_file():
+        filepath=com_file(filename,PATH)
+        filepath=Path(filepath)
+        print("file path:",os.path.abspath(filepath))
         #create destination file
-        destination=PATH / get_dir(filename)
-        if not destination.exists():
-            destination.mkdir()
-        shutil.move(str(PathToFile),str(destination))
+        # destination=PATH / get_dir(filename)
+        # if not destination.exists():
+        #     destination.mkdir()
+        # filename=Path(com_file(filename))
+        # PathToFile=filename.absolute()
+        # print("path to file:",PathToFile)
+        # shutil.move(str(PathToFile),str(destination))
+print("="*35)
+print("Organization Done!")
         
            
 
