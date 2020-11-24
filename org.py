@@ -7,24 +7,10 @@ import zipfile
 #fileType indentifier function 
 def get_dir(filename):
     ext=filename.suffix[1:]
+    if os.path.getsize(filename)>1000000000:
+        ext="lrg"
     return dirs.get(ext,"Others")
-#compressor function
-def com_file(filename,path):
-    dir=get_dir(filename)
-    Finalname=filename
-    if not dir=="Pcompressed" and os.path.getsize(filename)>300000000:
-    
-        Zipname=os.path.basename(filename).split(".")
-        Zipname=Zipname[0]
-        Zipname=Zipname + ".zip"
-        print("compressing...")
-    
-        newZip=zipfile.ZipFile(Zipname,'w')
-        newZip.write(filename,compress_type=zipfile.ZIP_DEFLATED)
-        newZip.close
-        Finalname=Zipname
-        shutil.move(str(os.path.abspath(Finalname)),str(path))
-    return Finalname
+
 
 
 #extension dictionary here
@@ -68,11 +54,14 @@ dirs={
     "csv": "Documents",
     
     #pre-compressed 
-    "rar":"Pcompressed",
-    "zip":"Pcompressed",
+    "rar":"Precompressed",
+    "zip":"Precompressed",
     
     #executables
-    "exe":"Executables"
+    "exe":"Executables",
+    
+    #Large files
+    "lrg":"Large Files"
     
 
  }
@@ -91,20 +80,15 @@ print("="*35)
 #path to Organize
 PATH=Path(argv[1])
 for filename in PATH.iterdir():    
-    #get absolute path of the file to be organized
-    # PathToFile=filename.absolute()
+    # get absolute path of the file to be organized
+    PathToFile=filename.absolute()
     if filename.is_file():
-        filepath=com_file(filename,PATH)
-        filepath=Path(filepath)
-        print("file path:",os.path.abspath(filepath))
         #create destination file
-        # destination=PATH / get_dir(filename)
-        # if not destination.exists():
-        #     destination.mkdir()
-        # filename=Path(com_file(filename))
-        # PathToFile=filename.absolute()
-        # print("path to file:",PathToFile)
-        # shutil.move(str(PathToFile),str(destination))
+        destination=PATH / get_dir(filename)
+        if not destination.exists():
+            destination.mkdir()
+        PathToFile=filename.absolute()
+        shutil.move(str(PathToFile),str(destination))
 print("="*35)
 print("Organization Done!")
         
