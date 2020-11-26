@@ -7,8 +7,6 @@ import zipfile
 #fileType indentifier function 
 def get_dir(filename):
     ext=filename.suffix[1:]
-    if os.path.getsize(filename)>1000000000:
-        ext="lrg"
     return dirs.get(ext,"Others")
 
 
@@ -65,32 +63,58 @@ dirs={
     
 
  }
-
-if len(argv) !=2: 
-    #take working default working directory as default
-    print(argv)
+def organize():
+    if len(argv) !=2: 
+        #take working default working directory as default
+        print(argv)
+        print("="*35)
+        print("[ERROR] Invalid number of arguments were provided")
+        print("rerun script again with the following format:")
+        print(f"[Usage]python {Path(__file__).name}< put your dir_path> (make sure the directory in absolute and in quotation")
+        print("="*35)
+        exit(1)
+    print("organizing...")
     print("="*35)
-    print("[ERROR] Invalid number of arguments were provided")
-    print("rerun script again with the following format:")
-    print(f"[Usage]python {Path(__file__).name}< put your dir_path> (make sure the directory in absolute and in quotation")
-    print("="*35)
-    exit(1)
-print("organizing...")
-print("="*35)
-#path to Organize
-PATH=Path(argv[1])
-for filename in PATH.iterdir():    
-    # get absolute path of the file to be organized
-    PathToFile=filename.absolute()
-    if filename.is_file():
-        #create destination file
-        destination=PATH / get_dir(filename)
-        if not destination.exists():
-            destination.mkdir()
+    #path to Organize
+    PATH=Path(argv[1])
+    for filename in PATH.iterdir():    
+        # get absolute path of the file to be organized
         PathToFile=filename.absolute()
-        shutil.move(str(PathToFile),str(destination))
-print("="*35)
-print("Organization Done!")
+        if filename.is_file():
+            #create destination file
+            destination=PATH / get_dir(filename)
+            if not destination.exists():
+                destination.mkdir()
+            PathToFile=filename.absolute()
+            shutil.move(str(PathToFile),str(destination))
+    print("="*35)
+    print("Organization Done!")
+    
+if __name__ == "__main__":    
+    
+    organize()
+    
+    # patterns = "*"
+    # ignore_patterns = ""
+    # ignore_directories = True
+    # case_sensitive = True
+    # my_event_handler = PatternMatchingEventHandler(patterns, ignore_patterns,
+    #                     ignore_directories, case_sensitive)
+    # my_event_handler.on_created = organize
+    # my_event_handler.on_modified = organize
+    
+    # go_recursively = False
+    # my_observer = Observer()
+    # my_observer.schedule(my_event_handler, PATH, recursive=go_recursively)
+
+    # my_observer.start()
+    # try:
+    #     while True:
+    #         time.sleep(1)
+    # except KeyboardInterrupt:
+    #     my_observer.stop()
+    # my_observer.join()
+organize()
         
            
 
