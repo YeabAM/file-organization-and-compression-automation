@@ -3,6 +3,10 @@ from pathlib import Path
 import shutil
 import os
 import zipfile
+import logging
+import time
+from watchdog.observers import Observer
+from watchdog.events import PatternMatchingEventHandler
 
 #fileType indentifier function 
 def get_dir(filename):
@@ -63,7 +67,10 @@ dirs={
     
 
  }
-def organize():
+  #path to Organize 
+PATH=Path(argv[1])
+
+def organize(event= None):
     if len(argv) !=2: 
         #take working default working directory as default
         print(argv)
@@ -75,8 +82,7 @@ def organize():
         exit(1)
     print("organizing...")
     print("="*35)
-    #path to Organize
-    PATH=Path(argv[1])
+   
     for filename in PATH.iterdir():    
         # get absolute path of the file to be organized
         PathToFile=filename.absolute()
@@ -94,27 +100,26 @@ if __name__ == "__main__":
     
     organize()
     
-    # patterns = "*"
-    # ignore_patterns = ""
-    # ignore_directories = True
-    # case_sensitive = True
-    # my_event_handler = PatternMatchingEventHandler(patterns, ignore_patterns,
-    #                     ignore_directories, case_sensitive)
-    # my_event_handler.on_created = organize
-    # my_event_handler.on_modified = organize
+    patterns = "*"
+    ignore_patterns = ""
+    ignore_directories = True
+    case_sensitive = True
+    my_event_handler = PatternMatchingEventHandler(patterns, ignore_patterns,
+                        ignore_directories, case_sensitive)
+    my_event_handler.on_created = organize
+    my_event_handler.on_modified = organize
     
-    # go_recursively = False
-    # my_observer = Observer()
-    # my_observer.schedule(my_event_handler, PATH, recursive=go_recursively)
+    go_recursively = False
+    my_observer = Observer()
+    my_observer.schedule(my_event_handler, PATH, recursive=go_recursively)
 
-    # my_observer.start()
-    # try:
-    #     while True:
-    #         time.sleep(1)
-    # except KeyboardInterrupt:
-    #     my_observer.stop()
-    # my_observer.join()
-organize()
+    my_observer.start()
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        my_observer.stop()
+    my_observer.join()
         
            
 
